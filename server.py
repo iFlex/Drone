@@ -19,7 +19,7 @@ def applyCommands(cmds):
     if DEBUG == True:
         dbg = ""
         for c in cmds:
-            dbg += ord(c)+" ";
+            dbg += ord(c)+" "
         print dbg  
     
     pi.set_PWM_dutycycle(config["pins"]["THROTTLE"], cmds[0])
