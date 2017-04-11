@@ -22,10 +22,10 @@ def applyCommands(cmds):
             dbg += str(ord(c))+" "
         print dbg  
     
-    pi.set_PWM_dutycycle(config["pins"]["THROTTLE"], cmds[0])
-    pi.set_PWM_dutycycle(config["pins"]["YAW"],      cmds[1])
-    pi.set_PWM_dutycycle(config["pins"]["PITCH"],    cmds[2])
-    pi.set_PWM_dutycycle(config["pins"]["ROLL"],     cmds[3])
+    pi.set_PWM_dutycycle(config["pins"]["THROTTLE"], ord(cmds[0]))
+    pi.set_PWM_dutycycle(config["pins"]["YAW"],      ord(cmds[1]))
+    pi.set_PWM_dutycycle(config["pins"]["PITCH"],    ord(cmds[2]))
+    pi.set_PWM_dutycycle(config["pins"]["ROLL"],     ord(cmds[3]))
 
 alive = True
 def timeoutThread():
