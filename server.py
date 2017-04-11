@@ -10,7 +10,7 @@ print("Reading Config")
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-print("Starting Server")
+print("Starting UDP Server on port:"+str(config["port"]))
 conn = socket(AF_INET,SOCK_DGRAM)
 conn.bind(('localhost',config["port"]))
 
