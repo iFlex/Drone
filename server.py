@@ -39,7 +39,7 @@ def timeoutThread():
 #threading.start_thread(timeoutThread,());
 while True:
     try:
-        commands, address = conn.recv(4)
+        commands, address = conn.recvfrom(4)
         applyCommands(commands)
         #timestamp last update
 

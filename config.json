@@ -1,6 +1,6 @@
 {
 "port":8085,
-"host":"192.168.0.2",
+"host":"192.168.0.3",
 "pins":{"THROTTLE":10,"YAW":11,"PITCH":12,"ROLL":13},
 "restval":{"THROTTLE":0,"YAW":200,"PITCH":200,"ROLL":200},
 "MAXVAL":254,
