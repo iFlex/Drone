@@ -12,7 +12,7 @@ with open('config.json', 'r') as f:
 
 print("Starting UDP Server on port:"+str(config["port"]))
 conn = socket(AF_INET,SOCK_DGRAM)
-conn.bind(('localhost',config["port"]))
+conn.bind(('',config["port"]))
 
 def applyCommands(cmds):
     global config
