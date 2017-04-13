@@ -1,21 +1,22 @@
 {
-"port":8085,
-"host":"192.168.0.3",
-"pins":{"THROTTLE":10,"YAW":11,"PITCH":12,"ROLL":13},
-"restval":{"THROTTLE":0,"YAW":200,"PITCH":200,"ROLL":200},
-"MAXVAL":254,
-"MINVAL":150,
-"keymap":{
-	"THROTTLE_UP" : " ",
-	"THROTTLE_DN" : "m",
-	"PITCH_UP"    : "w",
-	"PITCH_DN"    : "s",
-	"YAW_LEFT"    : "q",
-	"YAW_RIGHT"   : "e",
-	"ROLL_LEFT"   : "a",
-	"ROLL_RIGHT"  : "d",
-    "KILL"        : "x",
-    "TMAX"        : "o",
-    "TMIN"        : "l"
-}
+    "port":8085,
+    "host":"192.168.0.3",
+    "pins":{"THROTTLE":10,"YAW":11,"PITCH":12,"ROLL":13},
+    "restval":{"THROTTLE":0,"YAW":200,"PITCH":200,"ROLL":200},
+    "MAXVAL":254,
+    "MINVAL":150,
+    "receiver_timeout":500,
+    "keymap":{
+    	"THROTTLE_UP" : " ",
+    	"THROTTLE_DN" : "m",
+    	"PITCH_UP"    : "w",
+    	"PITCH_DN"    : "s",
+    	"YAW_LEFT"    : "q",
+    	"YAW_RIGHT"   : "e",
+    	"ROLL_LEFT"   : "a",
+    	"ROLL_RIGHT"  : "d",
+        "KILL"        : "x",
+        "TMAX"        : "o",
+        "TMIN"        : "l"
+    }
 }
