@@ -84,7 +84,7 @@ def updateLevels(ctl):
 def sendCommands():
     st = chr(THROTTLE)+chr(YAW)+chr(PITCH)+chr(ROLL)
     #cn.sendto(st,(config["host"],config["port"]))
-    if DEBUG == TRUE:
+    if DEBUG:
         print(str(THROTTLE)+" "+str(YAW)+" "+str(PITCH)+" "+str(ROLL))
 
 def lock(event):
@@ -137,7 +137,7 @@ pirol = LabelFrame(root, width=500, height=500)
 
 root.bind("<ButtonPress-1>",lock)
 root.bind("<ButtonRelease-1>", release)
-#root.bind("<Key>", key)
+root.bind("<Key>", key)
 pwror.pack()
 pirol.pack()
 
@@ -163,7 +163,7 @@ t.pack()
 y = Scale(pwror, from_=MIN, to=MAX, orient=HORIZONTAL, command=setYaw)
 y.pack()
 
-p = Scale(pirol, from_=MIN, to=MAX, orient=HORIZONTAL, command=setPitch)
+p = Scale(pirol, from_=MAX, to=MIN, command=setPitch)
 p.pack()
 
 r = Scale(pirol, from_=MIN, to=MAX, orient=HORIZONTAL,command=setRoll)
