@@ -19,8 +19,8 @@ THROTTLE = config["restval"]["THROTTLE"]
 PITCH    = config["restval"]["PITCH"]
 YAW      = config["restval"]["YAW"]
 ROLL     = config["restval"]["ROLL"]
-STEP     = 1;
-normDelay = 10;
+STEP     = 2;
+normDelay = 5;
 cancelNext = 0;
 
 if THROTTLE == 0:
@@ -83,13 +83,17 @@ def updateLevels(ctl):
 
 def sendCommands():
     st = chr(THROTTLE)+chr(YAW)+chr(PITCH)+chr(ROLL)
-    cn.sendto(st,(config["host"],config["port"]))
+    #cn.sendto(st,(config["host"],config["port"]))
     if DEBUG == TRUE:
         print(str(THROTTLE)+" "+str(YAW)+" "+str(PITCH)+" "+str(ROLL))
 
-def callback(event):
-    frame.focus_set()
-    print "clicked at", event.x, event.y
+def lock(event):
+    global cancelNext
+    cancelNext = -1;
+    
+def release(event):
+    global cancelNext
+    cancelNext = 0
 
 def key(event):
     global cancelNext
@@ -114,24 +118,65 @@ def getStep(current,goal,maxstp):
 
 def backToNominal():
     try:
-        global THROTTLE,PITCH,YAW,ROLL,cancelNext   
+        global root,THROTTLE,PITCH,YAW,ROLL,cancelNext   
         while True:
             if cancelNext == 0:
-                THROTTLE += getStep(THROTTLE,config["restval"]["THROTTLE"],STEP)
                 PITCH += getStep(PITCH,config["restval"]["PITCH"],STEP)
                 ROLL += getStep(ROLL,config["restval"]["ROLL"],STEP)
                 YAW += getStep(YAW,config["restval"]["YAW"],STEP)
-                sendCommands()
             else:
-                cancelNext -= 1
+                if cancelNext > 0:
+                    cancelNext -= 1
+            sendCommands()
             time.sleep(normDelay/1000.0)
     except Exception as e:
         print e
     
-frame = Frame(root, width=100, height=100)
-frame.bind("<Button-1>", callback)
-frame.bind("<Key>", key)
-frame.pack()
+pwror = LabelFrame(root, width=500, height=500)
+pirol = LabelFrame(root, width=500, height=500)
+
+root.bind("<ButtonPress-1>",lock)
+root.bind("<ButtonRelease-1>", release)
+#root.bind("<Key>", key)
+pwror.pack()
+pirol.pack()
+
+def setThrottle(val):
+    global THROTTLE
+    THROTTLE = int(val)
+
+def setYaw(val):
+    global YAW
+    YAW = int(val)
+
+def setRoll(val):
+    global ROLL
+    ROLL = int(val)
+
+def setPitch(val):
+    global PITCH
+    PITCH = int(val)
+
+t = Scale(pwror, from_=MAX, to=MIN, command=setThrottle)
+t.pack()
+
+y = Scale(pwror, from_=MIN, to=MAX, orient=HORIZONTAL, command=setYaw)
+y.pack()
+
+p = Scale(pirol, from_=MIN, to=MAX, orient=HORIZONTAL, command=setPitch)
+p.pack()
+
+r = Scale(pirol, from_=MIN, to=MAX, orient=HORIZONTAL,command=setRoll)
+r.pack()
+
+def updateSliders():
+    global root,t,y,p,r
+    t.set(THROTTLE)
+    p.set(PITCH)
+    y.set(YAW)
+    r.set(ROLL)
+    root.after(normDelay,updateSliders);
 
 thread.start_new_thread(backToNominal,())
+root.after(normDelay,updateSliders);
 root.mainloop()
