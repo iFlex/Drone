@@ -4,13 +4,13 @@ import json
 import struct
 import thread
 import time
+import joystick
 
 print("Reading Config")
 with open('config.json', 'r') as f:
     config = json.load(f)
 
 DEBUG = True
-
 
 MAX      = config["MAXVAL"];
 MIN      = config["MINVAL"];
@@ -82,7 +82,7 @@ def updateLevels(ctl):
         THROTTLE = MIN;
 
 def sendCommands():
-    st = chr(THROTTLE)+chr(YAW)+chr(PITCH)+chr(ROLL)
+    st = "T:"+chr(THROTTLE)+" Y:"+chr(YAW)+" P:"+chr(PITCH)+" R:"+chr(ROLL)
     #cn.sendto(st,(config["host"],config["port"]))
     if DEBUG:
         print(str(THROTTLE)+" "+str(YAW)+" "+str(PITCH)+" "+str(ROLL))
@@ -114,8 +114,37 @@ def getStep(current,goal,maxstp):
     if step > maxstp:
        step = maxstp
     
-    return step*sign
+    return(step*sign)
 
+def updateFromJoystick(values):
+    global THROTTLE,PITCH,YAW,ROLL
+
+    delta = MAX - MIN
+    def normalise(val,invert):
+        if invert == True:
+            val = 1 - val
+        return int(MIN + delta*val)
+
+    try:
+        if not (config["JoyStickAxisModifiers"]["THROTTLE"] == "IGNORE"):
+            THROTTLE = normalise(values["THROTTLE"],config["JoyStickAxisModifiers"]["THROTTLE"] == "INVERT")
+        
+        if not (config["JoyStickAxisModifiers"]["PITCH"] == "IGNORE"):
+            PITCH    = normalise(values["PITCH"],config["JoyStickAxisModifiers"]["PITCH"] == "INVERT")
+        
+        if not (config["JoyStickAxisModifiers"]["YAW"] == "IGNORE"):
+            YAW      = normalise(values["YAW"],config["JoyStickAxisModifiers"]["YAW"] == "INVERT")
+        
+        if not (config["JoyStickAxisModifiers"]["ROLL"] == "IGNORE"):
+            ROLL     = normalise(values["ROLL"],config["JoyStickAxisModifiers"]["ROLL"] == "INVERT")
+
+    except Exception as e:
+        print "ERROR: could not convert received joystick values. Potential reason (not finished calibration yet, move all axis to their extremes at least once"
+        print e
+        return
+
+    sendCommands()
+    
 def backToNominal():
     try:
         global root,THROTTLE,PITCH,YAW,ROLL,cancelNext   
@@ -130,7 +159,7 @@ def backToNominal():
             sendCommands()
             time.sleep(normDelay/1000.0)
     except Exception as e:
-        print e
+        print(e)
     
 pwror = LabelFrame(root, width=500, height=500)
 pirol = LabelFrame(root, width=500, height=500)
@@ -177,6 +206,13 @@ def updateSliders():
     r.set(ROLL)
     root.after(normDelay,updateSliders);
 
-thread.start_new_thread(backToNominal,())
+joystick_connected = False
+if "JoyStickAxisMap" in config and config["joystick"] == True:
+    joystick.init(config["JoyStickAxisMap"])
+    joystick_connected = joystick.start(updateFromJoystick)
+
+if not joystick_connected:
+    thread.start_new_thread(backToNominal,())
+
 root.after(normDelay,updateSliders);
 root.mainloop()

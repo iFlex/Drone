@@ -18,5 +18,13 @@
         "KILL"        : "x",
         "TMAX"        : "o",
         "TMIN"        : "l"
+    },
+    "joystick":true,
+    "JoyStickAxisMap":["ROLL","PITCH","YAW","THROTTLE"],
+    "JoyStickAxisModifiers":{
+        "THROTTLE":"OK",
+        "ROLL":"INVERT",
+        "YAW":"IGNORE",
+        "PITCH":"INVERT"
     }
 }
