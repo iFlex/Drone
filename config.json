@@ -17,7 +17,8 @@
     	"ROLL_RIGHT"  : "d",
         "KILL"        : "x",
         "TMAX"        : "o",
-        "TMIN"        : "l"
+        "TMIN"        : "l",
+        "JOYSTICK_NORMAL": "n"
     },
     "joystick":true,
     "JoyStickAxisMap":["ROLL","PITCH","YAW","THROTTLE"],

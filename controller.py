@@ -81,6 +81,9 @@ def updateLevels(ctl):
     if ctl == config["keymap"]["TMIN"]:
         THROTTLE = MIN;
 
+    if ctl == config["keymap"]["JOYSTICK_NORMAL"]:
+        joystick.is_neutral(["THROTTLE"])
+
 def sendCommands():
     st = "T:"+chr(THROTTLE)+" Y:"+chr(YAW)+" P:"+chr(PITCH)+" R:"+chr(ROLL)
     #cn.sendto(st,(config["host"],config["port"]))
