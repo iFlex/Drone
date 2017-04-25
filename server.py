@@ -46,6 +46,7 @@ while True:
         commands, address = conn.recvfrom(4)
         applyCommands(commands)
         lastUpdate = datetime.datetime.now();
-
+	#feedback
+	conn.sendto(commands,address)
     except Exception as e:
         print("Broke connection to client:"+str(e))
