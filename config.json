@@ -1,5 +1,5 @@
 {
-    "port":8085,
+    "port":8087,
     "host":"192.168.0.3",
     "pins":{"THROTTLE":10,"YAW":11,"PITCH":12,"ROLL":13},
     "restval":{"THROTTLE":0,"YAW":200,"PITCH":200,"ROLL":200},
@@ -20,7 +20,7 @@
         "TMIN"        : "l",
         "JOYSTICK_NORMAL": "n"
     },
-    "joystick":true,
+    "joystick":false,
     "JoyStickAxisMap":["ROLL","PITCH","YAW","THROTTLE"],
     "JoyStickAxisModifiers":{
         "THROTTLE":"OK",

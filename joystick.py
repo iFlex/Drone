@@ -1,6 +1,6 @@
-import pygame.joystick
 import time
 import thread
+import pygame.joystick
 
 axis_mapping = [];
 extreme_values = [];
@@ -114,3 +114,4 @@ def start(callback):
 		return True
 	else:
 		return False
+		

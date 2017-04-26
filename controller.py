@@ -4,7 +4,8 @@ import json
 import struct
 import thread
 import time
-import joystick
+import datetime
+#import joystick
 
 print("Reading Config")
 with open('config.json', 'r') as f:
@@ -22,12 +23,14 @@ ROLL     = config["restval"]["ROLL"]
 STEP     = 2;
 normDelay = 5;
 cancelNext = 0;
+lastRemoteFeedback = datetime.datetime.now()
 
 if THROTTLE == 0:
     THROTTLE = MIN
 
 print("connecting to client @"+str(config["port"]))
 cn = socket(AF_INET,SOCK_DGRAM)
+cn.bind(('',config["port"]))
 print("connected")
 
 root = Tk()
@@ -85,10 +88,10 @@ def updateLevels(ctl):
         joystick.is_neutral(["THROTTLE"])
 
 def sendCommands():
-    st = "T:"+chr(THROTTLE)+" Y:"+chr(YAW)+" P:"+chr(PITCH)+" R:"+chr(ROLL)
-    #cn.sendto(st,(config["host"],config["port"]))
+    st = chr(THROTTLE)+chr(YAW)+chr(PITCH)+chr(ROLL)
+    cn.sendto(st,(config["host"],config["port"]))
     if DEBUG:
-        print(str(THROTTLE)+" "+str(YAW)+" "+str(PITCH)+" "+str(ROLL))
+        print("T:"+str(THROTTLE)+" Y:"+str(YAW)+" P:"+str(PITCH)+" R:"+str(ROLL))
 
 def lock(event):
     global cancelNext
@@ -201,6 +204,12 @@ p.pack()
 r = Scale(pirol, from_=MIN, to=MAX, orient=HORIZONTAL,command=setRoll)
 r.pack()
 
+def checkFeedback():
+    global lastRemoteFeedback
+    while True:
+        data,address = cn.recvfrom(4)
+        lastRemoteFeedback = datetime.datetime.now()
+        
 def updateSliders():
     global root,t,y,p,r
     t.set(THROTTLE)
@@ -208,6 +217,12 @@ def updateSliders():
     y.set(YAW)
     r.set(ROLL)
     root.after(normDelay,updateSliders);
+
+    nw = datetime.datetime.now();
+    if ((nw - lastRemoteFeedback).total_seconds()*1000) > config["receiver_timeout"]:
+        root.configure(background='red')
+    else:
+        root.configure(background='green')
 
 joystick_connected = False
 if "JoyStickAxisMap" in config and config["joystick"] == True:
@@ -217,5 +232,6 @@ if "JoyStickAxisMap" in config and config["joystick"] == True:
 if not joystick_connected:
     thread.start_new_thread(backToNominal,())
 
+thread.start_new_thread(checkFeedback,())
 root.after(normDelay,updateSliders);
 root.mainloop()
