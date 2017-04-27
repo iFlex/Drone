@@ -1,5 +1,6 @@
 import time
 import thread
+from threading import Thread
 import pygame.joystick
 
 axis_mapping = [];
@@ -32,6 +33,7 @@ def init(mapping):
 
 	print "Axis count:"+str(joystick.get_numaxes());
 	print "Joystick name:"+str(joystick.get_name());
+	return joystick
 
 def read_joystick():
 	global joystick
@@ -52,7 +54,7 @@ def calibrate_step(values):
 			extreme_values[i][0] = values[i];
 		if extreme_values[i][1] < values[i]:
 			extreme_values[i][1] = values[i];
-
+			
 def format_response(values):
 	global extreme_values, axis_mapping, imperfection_offsets
 
@@ -114,4 +116,60 @@ def start(callback):
 		return True
 	else:
 		return False
-		
+
+STOP_DISCOVERY = False	
+def discoverMovedAxis():
+	global STOP_DISCOVERY
+	previous = []
+	mdiff = 0
+	axis = 0
+			
+	while not STOP_DISCOVERY:
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				break
+
+		data = read_joystick();
+		if len(previous) != 0:
+			for i in range(len(data)):
+				diff = abs(data[i] - previous[i])
+				if diff > mdiff:
+					mdiff = diff
+					axis = i
+		previous = data
+		time.sleep(0.10)
+	return axis
+
+class ThreadWithReturnValue(Thread):
+    def __init__(self, group=None, target=None, name=None,
+                 args=(), kwargs={}, Verbose=None):
+        Thread.__init__(self, group, target, name, args, kwargs, Verbose)
+        self._return = None
+    def run(self):
+        if self._Thread__target is not None:
+            self._return = self._Thread__target(*self._Thread__args,
+                                                **self._Thread__kwargs)
+    def join(self):
+        Thread.join(self)
+        return self._return
+
+def discoverAxis():
+	global STOP_DISCOVERY
+	#initialise final values
+	mapping = [""]*joystick.get_numaxes();
+
+	for i in range(joystick.get_numaxes()):
+		axis = raw_input("Type the name of the axis you want to move next?(CAPITALS):");
+		print ("Move axist to both maximums, you have 10 seconds...");
+		STOP_DISCOVERY = False
+		thread = ThreadWithReturnValue(target=discoverMovedAxis)
+		thread.start()
+		time.sleep(10);
+		STOP_DISCOVERY = True
+		j = thread.join()
+
+		if j >= 0 and j < len(mapping):
+			mapping[j] = axis
+			print mapping
+
+	return mapping

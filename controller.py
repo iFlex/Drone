@@ -5,13 +5,13 @@ import struct
 import thread
 import time
 import datetime
-#import joystick
+import joystick
 
 print("Reading Config")
 with open('config.json', 'r') as f:
     config = json.load(f)
 
-DEBUG = True
+DEBUG = False
 
 MAX      = config["MAXVAL"];
 MIN      = config["MINVAL"];
@@ -87,12 +87,22 @@ def updateLevels(ctl):
     if ctl == config["keymap"]["JOYSTICK_NORMAL"]:
         joystick.is_neutral(["THROTTLE"])
 
+lastSent=datetime.datetime.now()
+rate = 0
+count = 0
 def sendCommands():
+    global rate,count,lastSent
     st = chr(THROTTLE)+chr(YAW)+chr(PITCH)+chr(ROLL)
     cn.sendto(st,(config["host"],config["port"]))
     if DEBUG:
         print("T:"+str(THROTTLE)+" Y:"+str(YAW)+" P:"+str(PITCH)+" R:"+str(ROLL))
-
+    
+    #count += 1
+    #now = datetime.datetime.now()
+    #rate += (lastSent - now).total_seconds()
+    #lastSent = now
+    #print lastSent/count
+    
 def lock(event):
     global cancelNext
     cancelNext = -1;
@@ -228,7 +238,8 @@ joystick_connected = False
 if "JoyStickAxisMap" in config and config["joystick"] == True:
     joystick.init(config["JoyStickAxisMap"])
     joystick_connected = joystick.start(updateFromJoystick)
-
+    if joystick == None:
+        input("Failed to detect joystick")
 if not joystick_connected:
     thread.start_new_thread(backToNominal,())
 
