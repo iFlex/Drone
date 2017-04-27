@@ -236,7 +236,7 @@ def updateSliders():
 
 joystick_connected = False
 if "JoyStickAxisMap" in config and config["joystick"] == True:
-    joystick.init(config["JoyStickAxisMap"])
+    joystick.init(config["JoyStickAxisMap"],calibration=config.get("calibration",None))
     joystick_connected = joystick.start(updateFromJoystick)
     if joystick == None:
         input("Failed to detect joystick")

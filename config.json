@@ -1,1 +1,72 @@
-{"restval": {"YAW": 200, "THROTTLE": 0, "ROLL": 200, "PITCH": 200}, "MAXVAL": 254, "MINVAL": 150, "receiver_timeout": 500, "JoyStickAxisModifiers": {"YAW": "IGNORE", "THROTTLE": "OK", "ROLL": "INVERT", "PITCH": "INVERT"}, "host": "192.168.137.241", "keymap": {"JOYSTICK_NORMAL": "n", "TMIN": "l", "YAW_LEFT": "q", "TMAX": "o", "YAW_RIGHT": "e", "PITCH_UP": "w", "KILL": "x", "ROLL_LEFT": "a", "THROTTLE_UP": " ", "ROLL_RIGHT": "d", "THROTTLE_DN": "m", "PITCH_DN": "s"}, "JoyStickAxisMap": ["ROLL", "PITCH", "THROTTLE", "YAW"], "pins": {"YAW": 11, "THROTTLE": 10, "ROLL": 13, "PITCH": 12}, "joystick": true, "port": 8087}
+{
+    "JoyStickAxisMap": [
+        "ROLL", 
+        "PITCH", 
+        "THROTTLE", 
+        "YAW"
+    ], 
+    "JoyStickAxisModifiers": {
+        "PITCH": "INVERT", 
+        "ROLL": "INVERT", 
+        "THROTTLE": "OK", 
+        "YAW": "IGNORE"
+    }, 
+    "JoystickCalibration": {
+        "boundaries": [
+            [
+                -0.9609375, 
+                0.142852783203125
+            ], 
+            [
+                -0.9609375, 
+                0.32537841796875
+            ], 
+            [
+                -0.9609375, 
+                0.190460205078125
+            ], 
+            [
+                -0.6171875, 
+                0.0555419921875
+            ]
+        ], 
+        "offsets": [
+            0.002502142718902922, 
+            0.046595492289442486, 
+            0.5, 
+            -0.1051986935220468
+        ]
+    }, 
+    "MAXVAL": 254, 
+    "MINVAL": 150, 
+    "host": "192.168.137.241", 
+    "joystick": true, 
+    "keymap": {
+        "JOYSTICK_NORMAL": "n", 
+        "KILL": "x", 
+        "PITCH_DN": "s", 
+        "PITCH_UP": "w", 
+        "ROLL_LEFT": "a", 
+        "ROLL_RIGHT": "d", 
+        "THROTTLE_DN": "m", 
+        "THROTTLE_UP": " ", 
+        "TMAX": "o", 
+        "TMIN": "l", 
+        "YAW_LEFT": "q", 
+        "YAW_RIGHT": "e"
+    }, 
+    "pins": {
+        "PITCH": 12, 
+        "ROLL": 13, 
+        "THROTTLE": 10, 
+        "YAW": 11
+    }, 
+    "port": 8087, 
+    "receiver_timeout": 500, 
+    "restval": {
+        "PITCH": 200, 
+        "ROLL": 200, 
+        "THROTTLE": 0, 
+        "YAW": 200
+    }
+}

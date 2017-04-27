@@ -9,10 +9,36 @@ imperfection_offsets = [];
 
 joystick = None
 DO_CALIBRATE = True
+CALIBRATE_TIME = 10
 
-def init(mapping):
-	global axis_mapping, extreme_values, imperfection_offsets, joystick
+def list():
+	global joystick
+	
+	if joystick == None:
+		pygame.init()
+		pygame.joystick.init()
+	
+	js = []
+	r = pygame.joystick.get_count()
+	
+	for i in range(r):
+		jstk = pygame.joystick.Joystick(i)
+		jstk.init()
+		js.append(jstk.get_name()+" With "+str(jstk.get_numaxes())+" axis")
+	
+	if joystick == None:
+		pygame.quit()
+	
+	return js
 
+def init(mapping,**kwargs):
+	global axis_mapping, extreme_values, imperfection_offsets, joystick, DO_CALIBRATE
+	choice = 0
+
+	if "joystick" in kwargs.iteritems():
+		choice = kwargs.iteritems()["joystick"]
+	
+	pygame.init()
 	pygame.joystick.init()
 	if pygame.joystick.get_count() == 0:
 		return None;
@@ -22,14 +48,18 @@ def init(mapping):
 	axis_mapping = mapping
 	
 	#init joystick
-	pygame.init()
-	joystick = pygame.joystick.Joystick(0)
+	joystick = pygame.joystick.Joystick(choice)
 	joystick.init();
 	
 	#initialise final values
 	for i in range(joystick.get_numaxes()):
 		extreme_values.append([0,0]);
 		imperfection_offsets.append(0.0)
+
+	if "calibration" in kwargs.iteritems() and kwargs.iteritems()["calibration"]:
+		extreme_values = kwargs.iteritems()["calibration"]["boundaries"]
+		imperfection_offsets = kwargs.iteritems()["calibration"]["offsets"]
+		DO_CALIBRATE = False
 
 	print "Axis count:"+str(joystick.get_numaxes());
 	print "Joystick name:"+str(joystick.get_name());
@@ -67,7 +97,6 @@ def format_response(values):
 		rsp = abs(extreme_values[i][1] - values[i]) / delta
 		response[axis_mapping[i]] = rsp + (1-abs(0.5-rsp)/0.5)*imperfection_offsets[i]
 
-	print response
 	return response;
 
 def is_neutral(skip):
@@ -94,9 +123,9 @@ def start_calibration():
 	global DO_CALIBRATE
 	DO_CALIBRATE = True
 
+done = False;
 def run(callback):
-	global DO_CALIBRATE
-	done = False;
+	global DO_CALIBRATE,done
 	while done == False:
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
@@ -107,7 +136,7 @@ def run(callback):
 			calibrate_step(data)
 		callback(format_response(data))
 
-		time.sleep(0.20);
+		time.sleep(0.10);
 
 def start(callback):
 	global joystick
@@ -116,6 +145,11 @@ def start(callback):
 		return True
 	else:
 		return False
+
+def stop():
+	global done
+	done = True
+	pygame.quit()
 
 STOP_DISCOVERY = False	
 def discoverMovedAxis():
@@ -160,11 +194,11 @@ def discoverAxis():
 
 	for i in range(joystick.get_numaxes()):
 		axis = raw_input("Type the name of the axis you want to move next?(CAPITALS):");
-		print ("Move axist to both maximums, you have 10 seconds...");
+		print ("Move axist to both maximums, you have "+str(CALIBRATE_TIME)+" seconds...");
 		STOP_DISCOVERY = False
 		thread = ThreadWithReturnValue(target=discoverMovedAxis)
 		thread.start()
-		time.sleep(10);
+		time.sleep(CALIBRATE_TIME);
 		STOP_DISCOVERY = True
 		j = thread.join()
 
@@ -173,3 +207,6 @@ def discoverAxis():
 			print mapping
 
 	return mapping
+
+def getCalibrationData():
+	return {"boundaries":extreme_values,"offsets":imperfection_offsets}
